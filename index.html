@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Rust -> WASM -> Web">
+  <title>Rust -> WASM -> Web Basic Buildchain</title>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      let wasmAdd;
+
+      WebAssembly.instantiateStreaming(fetch("./build/add.wasm"), {}).then((wasm) => {
+        wasmAdd = wasm.instance.exports.add;
+      });
+
+      const calculate = document.getElementById('calculate');
+
+      calculate.addEventListener('click', () => {
+        if (wasmAdd) {
+          const left = document.getElementById('left');
+          const right = document.getElementById('right');
+          const result = document.getElementById('result');
+
+          result.innerText = wasmAdd(left.value || 0, right.value || 0);
+        }
+      })
+    });
+  </script>
+
+  <style>
+    body {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: center;
+      width: 100vw;
+    }
+
+    .number {
+      display: inline;
+    }
+
+    button {
+      margin: 5%;
+    }
+  </style>
+</head>
+
+<body>
+  <span>
+    <input class="number" id="left" type="number"> + <input class="number" id="right" type="number"> = <span
+      class="number" id="result"></span>
+  </span>
+  <button id="calculate" type="button">Calculate</button>
+</body>
+
+</html>
